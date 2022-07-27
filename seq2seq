@@ -1,0 +1,18 @@
+mu li says:
+
+seq2seq是由两部分组成，一个编码器一个解码器，然后其中解码器是一个RNN类模型，它可以TAKE VARIABLE-LENGTH INPUT进来，然后把它压成最后的那个hidden state，接着呢
+传到解码器
+{}解码器也很有意思，还是一个RNN结构，这个RNN的第一个循环接受的hidden state就是编码器传过来的hidden state，然后再加上一个<bos>作为输入，就开始有输出啦；接着第一个解码出
+的信息将作为下一个时刻的输入，再加上传导过来的新的hidden state，就这样一个一个往外生成输出（variable-length output），直到某一时刻它输出一个<eos>就结束了
+
+因此 seq2seq可以应付variable-length input和variable-length output
+
+
+{}解码器还有一个很有意思的地方 那就是训练和推理的时候，解码器每个时刻拿到的输入是不一样的。在训练的时候，假设我解码器第一时刻收到一个初始hidden state h_0，这个h_0呢就是
+编码器传过来的encoded hidden state，然后这个时刻的输入是<bos>，然后同时这个时刻会通过当前时刻输入和初始hidden state来生成下一时刻的hiddent state h_1，然后重点来了，
+下一时刻的输入，是我们已知的，也就是target sequence中的除去<bos>后的第二个token，所以我们直接把这个token当作第二时刻的输入，而不是把第一时刻生成的输出当成输入。
+
+但是呢，在推理过程的时候，我们没有target sequence，所以从第二时刻开始，我们只能把前一时刻所生成的输出当作下一时刻的输入传进来，即使上一时刻infer错了我们还是得用。
+
+train的时候就可以用已知的target sequence中的token做输入。
+
