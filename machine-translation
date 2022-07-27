@@ -1,0 +1,27 @@
+we have used rnns to design language models which are key to natural language processing. another flagship benchmark
+is machine translation, a central problem domain for sequence transduction models that transform input sequences
+into output sequences, playing a crucial role in various modern ai applications, sequence transduction models will 
+form the focus of the remainder of this chapter and section 11. to this end, this section introduces the machine
+translation problem and its dataset that will be used later.
+
+machine translation refers to the automatic translation of a sequence from one language to another, infact this 
+field may date back to 1940s soon after digital computers were invented, especially by considering the use of computers
+for cracking language codes in world war 2. for decades, statistical approaches had been dominant in this field 
+before the rise of end to end using neural networks. this latter is often called neural machine translation to 
+distinguish itself from statistical machine translation that involves statistical analysis in components such 
+as the translation model and the language model.
+
+emphasizing end-to-end learning, this book will focus on neural machine translation methods. different from our 
+language model problem in section 9.3 whose corpus is in one single language, machine translation datasets are
+composed of pairs of text sequences that are in the soureclanguage and the target lanugage, respectively,
+thus, instead of reusing the preprocessing routine for language modeling, we need a different way to preprocessing 
+machine translation datasets.
+
+recall that in language modeling each sequence example, either a segment of one setence or a span over multiple 
+sentences, has a fixed length. this was specified by the num_steps (number of time steps or tokens) argument
+in section 9.3. in machine translation, each example is a pair of source and target text sequences, where each
+text sequence may have different lengths.
+
+for computational efficiency, we can still process a minibatch of text sequences at one time by truncation 
+and padding. suppose that every sequence in the same minibatch should have the same length num_steps. if a 
+text sequence has fewer than num_steps tokens, we will keep appending the specia
