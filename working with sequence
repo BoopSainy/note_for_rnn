@@ -1,2 +1,75 @@
 note-from-d2l.ai tutorial
 
+up until now, we've focused on models whose inputs consisted of a single feature vector x (- R^d. The main change of perspective
+when developing models capable of processing sequences is that we now focus on inputs that consist of an ordered list of 
+feature vectors x_1, x_2, ..., x_T, where each feature vector x_t indexed by a sequence step t(- Z^+ lies in R^d.
+
+Some datasets consist of a single massive sequence. consider, for example, the extremely long streams of sensor readings that
+might be available to climate scientists. in such cases, we might create training datasets by randomly sampling subsequences
+of some predetermined length. more often, our data arrive as a collection of sequences. consider the following examples: (i) a
+collection of documents, each represented as its own seuqnce of words, and each having its own length Ti; (ii) sequence 
+representation of patient stays in the hospital, where each stay consist of a number of events and the sequence length depends
+roughly on the length of the stay.
+
+{时序数据集就像这样： （1）比如我们有一个文本集合，里面有100段话，那么我现在就有100个样本，然后呢，每个文本又有自己的词序列，所以每个样本的序列长度又是
+不同的，但是当我们试图去embedding词时，会用固定维度的特征数量来表达词汇，也就是说，这个文本集合可以用一个三维的数组来表示，第一维度为文本数量doc_num，
+第二维度是文本中词序列的长度，由于文本之间的词序列长短不一，所以我们可以设定一个固定长度，来padding长度不足的文本，这样第二个维度就是fixed_seq_num，
+而第三个维度便是用来表达每个词汇的特征数目feature_num}
+
+previously, when dealing with individual inputs, we assumed that they were sampled independently from the same underlying
+distribution P(X). while we still assume that entire sequences (e.g., entire documents or patient trajectories) are sampled
+independently, we cannot assume that the data arriving at each sequence step are independent of each other. for example, what
+words are likely to appear later in a dcoument depends heavily on what words occurred ealier in the document
+{对于非时序数据集，我们认为所有的数据是服从同一个概率分布的（多维度or单维度），样本a的特征表达与样本b的是完全独立的；在时序数据集里，我们同样认为，
+完整序列A和完整序列B是相互独立的，但是呢，在完整序列A里的单词a_1, a_2, a_3, ... 是相互关联的，a_2是什么词时与它前后时刻是什么词有关系的}
+what medicine a patient is likely to receive on the 10th day of a hospital visit depends heavily on what transpired in the
+previous nine days.
+
+this should come as no surprise. if we didn't believe that the elements in a sequence were related, we would not have bothered
+to model them as a sequence in the first place. consider the usefulness of the auto-fill features that are popular on search
+tools and modern email clients. they are useful precisely because it is often possibe to predict (imperfectly, but better than 
+random guessing) what likely continuations of a sequence might be, given some initial prefix. for most sequence models, we
+don't require independece, or even stationarity, of our sequences. instead, we require only that themselve are sampled 
+from some fixed underlying distribution over entire sequences.
+{不要求序列中词汇相互独立，只希望完整的句子来自于相同的概率分布}
+
+this flexible approach, allows for such phenomena as (i) documents looking significantly different at the beginning than
+at the end, or (ii) patient status evolving either towards recovery or towards death over the course of a hospital stay;
+and (iii) customer taste evolving in predictable ways over course of continued interaction with a recommender system.
+
+we sometimes wish to predict a fixed 
+
+{输入输出模式：n2one,输入一个序列，得到一个target，比如情感分类；n2n，输入一个序列，得到一个序列，比如pos taggin和机器翻译；
+one2n，给一个输入，得到一个序列，比如image caption}
+seq2seq: (a) aligned: where the input at each sequence step aligns with a corresponding target (e.g., part of speech taggin);
+(b) unaligned: where the input and target do not necessarily exhibit a step for step correspondence (e.g., machine translation)
+
+but before we worry about handling targets of any kind, we can tackle the most straightforward problem: unsupervised density 
+modeling (also called sequence modeling). here, given a collection of sequences, our goal is to estimate the probability mass
+function that tells us how likely we are to see any given sequence, i.e. p(x1, ..., xt).
+
+before introducing specialized neural networks designed to handle sequentially structure data, let's take a look at some actual
+sequence data and build up some basic intuitions and statistical tools. in particular, we will focus on stock price data 
+from the ftse 100 index. at each time step t(-Z+, we observe the price of the index at that time, denoted by x_t.
+
+now suppose that a trader would like to make short term trades, strategically getting into or out of the index, depending on 
+whether they believe that it will rise or decline in the subsequent time step. absent any other features (news, financial 
+reporting data, etc), the only available signal for predicting the subsequent value is the history of prices to date.
+
+autoregressive model:
+the trader is thus interested in knowing the probability distribution
+p(x_t|x_t-1, ..., x_1)
+over prices that the index might take in the subsequent time step. while estimating the entire distribution over a continuous-
+valued random variable can be difficult, the trader would be happy to focus on a few key statistics of the distribution, 
+particularly the expected value and the variance, one simple strategy for estimating the conditional expectation.
+
+there is just one major problem: the number of inputs, x_t-1, .., x_1 varies, depending on t. namely, the number of inputs
+increases with the amount of data that we encounter. thus if we want to treat our historical data as a training set, we
+are left with the problem that each example has adifferent number of features.
+
+
+{我感觉李沐老师所说的自回归模型就是：比如我有一个时序数据，一个句子，那么我如果通过一个模型，它可以根据我的前5个词是什么得到我第6个词的概率分布，那么
+这个模型就是autoregression model}
+
+
+
