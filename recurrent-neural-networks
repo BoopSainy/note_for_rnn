@@ -1,0 +1,45 @@
+note from d2l.ai tutorial
+in sections 9.3 we describe markov models and n-grams for language modeling, where the conditional probability
+
+matters are entirely different when we have hidden states. let's look at the structure in some more details.
+
+assume that we have a minibatch of inputs X_t (- R^nxd at time step t. in other words, for a minibatch of n sequence examples, 
+each row of X_t corresponds to one example at time step t from the sequence. next, denote by H_t (- R^nxh the hidden layer output of
+time step t.
+
+from the relationship between hidden layer outputs Ht and Ht-1 of adjacent time steps, we know that these variables captured and retained 
+the sequence's historical information up to their current time step, just like the state or memory of the neural network's current time
+step. therefore, such a hidden layer output is called a hidden state. since the hidden state uses the same definition of the previous
+time step in the current time step, the computation of 1s recurrent. hence, as we said, neural networks within hidden states based on
+recurrent computation are named recurrent neural networks. layers that perform the computation of hiddent states in RNNs are called 
+recurrent layers.
+
+there are many different ways for constructing RNNs. rnns with a hidden state defined by 945 are very common. for time step t, the output of
+the output layer is similar to the computation in the mlp. 
+
+{it is worth mentioning that even at different time steps, rnns always use these model parameters. therefore, the parameterization cost of
+an rnn does not grow as the number of time steps increases. 对于多个时间步长，weight + bias 全局共享} 
+
+fig941 illustrates the computational logic of an rnn at three adjacent time steps. at any time step t, the computation of the hidden state
+can be treated as: (i) concatenating the input Xt at the current 
+
+recall that for language modeling in section9.3, we aim to predict the next token based on the current and past tokens, thus we shift
+the original sequence by one token as the targets
+
+
+we start with a simplified model of how an rnn works. this model ignores details abou the specifics of the hidden state and how it is 
+updated. the mathematical notation here does not explicitly distinguish scalars, vectors, and matrices. we are just trying to develop some
+intuition 
+
+当t变得很大的时候，t时刻的损失对W_h的偏导数将很难计算。
+9711 full computation:
+one idea might be to compute the full sum in 977. however, this is very slow and gradients can blow up, since subtle changes in the
+initial condition can optentially affect the outcome a lot. that is, we could see things similar to the butterfly effect, where
+minial changes in the initial condition lead to disproportionate changes in the outcome. this is generally undesirable. after all,
+we are looking for robust estimators that generalize well. hence this strategy is almost never used in practice.
+
+9712 truncating time steps
+alternatively, we can truncate the sum in 977 after tao steps. this is what we have been discussing so far, such as when we detached
+the gradients in section 9.5. this leads to an approximation of the true gradient, simply by terminating the sum at 
+in practice this works quite well. it is what is commonly referred to as truncated backpropagation through time. one of the 
+consequences of this is that the model focuses primarily on short-term influence ratehr than long-term consequences.
